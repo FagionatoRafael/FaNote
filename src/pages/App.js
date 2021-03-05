@@ -26,14 +26,8 @@ function App() {
   const [err, setErr] = useState({titleErr: '', textErr: '', boolErrTitle: false, boolErrText: false})
   
   useEffect(() => {
-    setContent(JSON.parse(localStorage.getItem('content')))
-    console.log(localStorage.getItem('content'))
-    if(content.length === 0 || localStorage.length === 0) {
-      return
-    } else {
-      console.log('aloo')
-      
-      // setContent()
+    if(!localStorage.length === null) {
+      setContent(JSON.parse(localStorage.getItem('content')))
     }
   }, [])
 
