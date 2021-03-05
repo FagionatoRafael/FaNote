@@ -26,7 +26,10 @@ function App() {
   const [err, setErr] = useState({titleErr: '', textErr: '', boolErrTitle: false, boolErrText: false})
   
   useEffect(() => {
-    if(!localStorage.length === null) {
+    if(localStorage.length === 0) {
+      console.log('aa')
+      setContent([])
+    } else {
       setContent(JSON.parse(localStorage.getItem('content')))
     }
   }, [])
