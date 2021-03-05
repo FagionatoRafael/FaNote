@@ -14,7 +14,6 @@ import useStyles from './style'
 import Block from "../components/block";
 import AddNote from '../components/addNote'
 
-
 function App() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -25,6 +24,18 @@ function App() {
   const [idB, setIdB] = useState(undefined);
   const [alert, setAlert] = useState({display: 'none', type: '', message: ''})
   const [err, setErr] = useState({titleErr: '', textErr: '', boolErrTitle: false, boolErrText: false})
+  
+  useEffect(() => {
+    setContent(JSON.parse(localStorage.getItem('content')))
+    console.log(localStorage.getItem('content'))
+    if(content.length === 0 || localStorage.length === 0) {
+      return
+    } else {
+      console.log('aloo')
+      
+      // setContent()
+    }
+  }, [])
 
   const handleClickOpen = () => {
     setTitle('')
@@ -54,15 +65,18 @@ function App() {
   }
 
   const handleContent = () => {
+    
     if(idB) {
       content[idB].title = title
       content[idB].text = text  
       handleAlert({display: 'block', type: 'info', message: `Anotação com titulo: ${title} foi alterada`})
+      saveData(content)
     } else if(idB === 0) {
       content[idB].title = title
       content[idB].text = text  
       setIdB(undefined)
       handleAlert({display: 'block', type: 'info', message: `Anotação com titulo: ${title} foi alterada`})
+      saveData(content)
     } else {
       if(text == '' && title == '') {
         setErr({titleErr: 'O campo titulo nao pode ser vazio!', textErr: 'O campo texto não pode ser vazio!', boolErrTitle: true, boolErrText: true})
@@ -74,12 +88,23 @@ function App() {
         setErr({titleErr: '', textErr: 'O campo texto não pode ser vazio!', boolErrTitle: false, boolErrText: true})
         return;
       } else {
+        const values = [...content, {
+          text: text,
+          title: title,
+          date: date
+        }]
+
         setIdB(undefined)
-        setContent([...content, {text: text, title: title, date: date}])
+        setContent(values)
+        saveData(values)
         handleAlert({display: 'block', type: 'success', message: `Anotação com titulo: ${title} registrada`})
       }
     }
     setOpen(false);
+  }
+
+  const saveData = (values) => {
+    localStorage.setItem('content', JSON.stringify(values))
   }
 
   const handleDelete = (id) => {
@@ -87,6 +112,7 @@ function App() {
     if(idx === -1) {
       content.splice(id, 1);
       handleAlert({display: 'block', type: 'error', message: `Anotação com titulo: ${title} foi deletada`})
+      saveData(content)
     }
   }
 
