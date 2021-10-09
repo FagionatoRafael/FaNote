@@ -12,27 +12,29 @@ import Alert from '@material-ui/lab/Alert';
 import './App.css'
 import useStyles from './style'
 import Block from "../components/block";
-import AddNote from '../components/addNote'
+import AddNote from '../components/addNote';
+
+import {typeAlert, typeErr} from "../Util/Types";
 
 function App() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(true);
   const [content, setContent] = useState([]);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [date, setDate] = useState(Moment().format('DD/MM/YYYY'));
+  const [date] = useState(Moment().format('DD/MM/YYYY'));
   const [idB, setIdB] = useState(undefined);
-  const [alert, setAlert] = useState({display: 'none', type: '', message: ''})
-  const [err, setErr] = useState({titleErr: '', textErr: '', boolErrTitle: false, boolErrText: false})
+  const [alert, setAlert] = useState(typeAlert)
+  const [err, setErr] = useState(typeErr)
   
   useEffect(() => {
     if(localStorage.length === 0) {
-      console.log('aa')
       setContent([])
     } else {
       setContent(JSON.parse(localStorage.getItem('content')))
     }
-  }, [])
+  }, [update])
 
   const handleClickOpen = () => {
     setTitle('')
@@ -75,13 +77,13 @@ function App() {
       handleAlert({display: 'block', type: 'info', message: `Anotação com titulo: ${title} foi alterada`})
       saveData(content)
     } else {
-      if(text == '' && title == '') {
+      if(text === '' && title === '') {
         setErr({titleErr: 'O campo titulo nao pode ser vazio!', textErr: 'O campo texto não pode ser vazio!', boolErrTitle: true, boolErrText: true})
         return;
-      } else if(title == '') {
+      } else if(title === '') {
         setErr({titleErr: 'O campo titulo nao pode ser vazio!', textErr: '', boolErrTitle: true, boolErrText: false})
         return;
-      } else if(text == '') {
+      } else if(text === '') {
         setErr({titleErr: '', textErr: 'O campo texto não pode ser vazio!', boolErrTitle: false, boolErrText: true})
         return;
       } else {
@@ -114,6 +116,7 @@ function App() {
   }
 
   const handleUpdate = (id, value) => {
+    update ? setUpdate(false) : setUpdate(true)
     setOpen(true);
     setText(value.text);
     setTitle(value.title);
